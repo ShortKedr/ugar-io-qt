@@ -13,6 +13,10 @@ public:
     static const int DOWN_KEY = Qt::Key_S;
     static const int LEFT_KEY = Qt::Key_A;
     static const int RIGHT_KEY = Qt::Key_D;
+    static constexpr quint32 UP_SCANCODE = 0x11;
+    static constexpr quint32 LEFT_SCANCODE = 0x1E;
+    static constexpr quint32 DOWN_SCANCODE = 0x1F;
+    static constexpr quint32 RIGHT_SCANCODE = 0x20;
 
     UgarPlayer() = default;
     UgarPlayer(const QPointF& position, float radius);
@@ -26,6 +30,8 @@ private:
     bool downKey = false;
     bool leftKey = false;
     bool rightKey = false;
+
+    bool handleScanCode(quint32 scanCode, bool press);
 };
 
 #endif // UGAR_IO_QT_UGARPLAYER_H

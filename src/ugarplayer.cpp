@@ -4,6 +4,25 @@ UgarPlayer::UgarPlayer(const QPointF& position, float radius)
     : Ugar(position, radius) {
 }
 
+bool UgarPlayer::handleScanCode(quint32 scanCode, bool press) {
+    switch (scanCode) {
+    case UP_SCANCODE:
+        upKey = press;
+        return true;
+    case DOWN_SCANCODE:
+        downKey = press;
+        return true;
+    case LEFT_SCANCODE:
+        leftKey = press;
+        return true;
+    case RIGHT_SCANCODE:
+        rightKey = press;
+        return true;
+    default:
+        return false;
+    }
+}
+
 void UgarPlayer::Update() {
     Ugar::Update();
     if (upKey) {
@@ -38,6 +57,10 @@ void UgarPlayer::event(QKeyEvent* event) {
     if (event->type() == QEvent::KeyPress) {
         press = true;
     } else if (event->type() != QEvent::KeyRelease) {
+        return;
+    }
+
+    if (handleScanCode(event->nativeScanCode(), press)) {
         return;
     }
 
