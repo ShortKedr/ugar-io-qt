@@ -3,7 +3,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
-#include <QPainterPath>
 
 Ugar::Ugar(const QPointF& position, float radius)
     : position(position), radius(radius), showedRadius(radius), color(std::rand() % 256, std::rand() % 256, std::rand() % 256) {
@@ -76,9 +75,9 @@ void Ugar::SetSquare(float square) {
 }
 
 void Ugar::Draw(QPainter* painter) const {
-    QPainterPath path;
-    path.addEllipse(drawingRect);
-    painter->fillPath(path, QBrush(color));
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(color);
+    painter->drawEllipse(drawingRect);
 }
 
 bool Ugar::CheckCollision(Ugar* target, bool* isLesser) const {

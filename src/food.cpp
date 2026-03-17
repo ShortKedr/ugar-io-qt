@@ -3,8 +3,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
-#include <QPainterPath>
-
 Food::Food(float radius, const QPointF& position)
     : radius(radius), position(position), color(std::rand() % 50, std::rand() % 50, std::rand() % 50) {
 }
@@ -25,7 +23,7 @@ void Food::SetSquare(float square) {
 }
 
 void Food::Draw(QPainter* painter) const {
-    QPainterPath path;
-    path.addEllipse(drawingRect);
-    painter->fillPath(path, QBrush(color));
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(color);
+    painter->drawEllipse(drawingRect);
 }

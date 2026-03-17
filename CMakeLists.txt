@@ -13,8 +13,8 @@ if(DEFINED ENV{QT_ROOT} AND NOT "$ENV{QT_ROOT}" STREQUAL "")
     list(PREPEND CMAKE_PREFIX_PATH "${QT_ROOT_PATH}")
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui OpenGL)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui OpenGL)
 
 set(UGAR_IO_QT_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp"
@@ -41,7 +41,7 @@ else()
 endif()
 
 target_include_directories(ugar-io-qt PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(ugar-io-qt PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui)
+target_link_libraries(ugar-io-qt PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::OpenGL)
 
 set_target_properties(ugar-io-qt PROPERTIES
     OUTPUT_NAME "ugar-io-qt"

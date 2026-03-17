@@ -3,18 +3,14 @@
 
 #include <memory>
 
-#include <QBackingStore>
-#include <QEvent>
-#include <QExposeEvent>
 #include <QKeyEvent>
+#include <QOpenGLWindow>
 #include <QPainter>
-#include <QResizeEvent>
 #include <QTimer>
-#include <QWindow>
 
 #include "ugar_io_qt/game.h"
 
-class GameWindow : public QWindow {
+class GameWindow : public QOpenGLWindow {
 public:
     static constexpr int DEFAULT_WIDTH = 800;
     static constexpr int DEFAULT_HEIGHT = 600;
@@ -22,19 +18,18 @@ public:
     explicit GameWindow(QWindow* parent = nullptr);
     ~GameWindow() override = default;
 
-    void render(QPainter* painter);
-
-    void renderLater();
-    void renderNow();
-
 protected:
-    bool event(QEvent* event) override;
-    void resizeEvent(QResizeEvent* event) override;
-    void exposeEvent(QExposeEvent* event) override;
+    void initializeGL() override;
+    void resizeGL(int w, int h) override;
+    void paintGL() override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
     std::unique_ptr<Game> game;
-    std::unique_ptr<QBackingStore> backingStore;
+    QTimer frameTimer;
+
+    void handleKeyEvent(QKeyEvent* event);
 };
 
 #endif // UGAR_IO_QT_GAMEWINDOW_H
