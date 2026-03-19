@@ -55,6 +55,11 @@ if(APPLE)
     target_compile_definitions(ugar-io-qt PRIVATE GL_SILENCE_DEPRECATION)
 endif()
 
+install(TARGETS ugar-io-qt
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
+
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ugar-io-qt)
 endif()
@@ -71,9 +76,15 @@ if(UNIX AND NOT APPLE)
         @ONLY
     )
 
-    install(TARGETS ugar-io-qt RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/qt.conf"
-            DESTINATION "${CMAKE_INSTALL_BINDIR}")
     install(FILES "${UGAR_IO_QT_DESKTOP_FILE}"
             DESTINATION "${CMAKE_INSTALL_DATADIR}/applications")
+endif()
+
+if(QT_VERSION_MAJOR EQUAL 6 AND (APPLE OR UNIX))
+    qt_generate_deploy_app_script(
+        TARGET ugar-io-qt
+        OUTPUT_SCRIPT ugar_io_qt_deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT "${ugar_io_qt_deploy_script}")
 endif()

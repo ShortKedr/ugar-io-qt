@@ -80,17 +80,11 @@ jobs:
       - name: Bundle Linux app
         run: |
           mkdir -p dist/AppDir/usr/share/icons/hicolor/256x256/apps
-          DESTDIR="$PWD/dist/AppDir" cmake --install build --prefix /usr --config Release
+          cmake --install build --prefix "$PWD/dist/AppDir/usr" --config Release
           convert "resources/icon.ico[0]" -resize 256x256 dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png
           cp dist/AppDir/usr/share/applications/ugar-io-qt.desktop dist/AppDir/ugar-io-qt.desktop
           cp dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png dist/AppDir/ugar-io-qt.png
           find dist/AppDir -maxdepth 4 -type f | sort
-          qmake -v
-          ldd dist/AppDir/usr/bin/ugar-io-qt
-          wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt.AppImage
-          chmod +x linuxdeployqt.AppImage
-          export APPIMAGE_EXTRACT_AND_RUN=1
-          ./linuxdeployqt.AppImage dist/AppDir/usr/share/applications/ugar-io-qt.desktop -qmake="$(command -v qmake)" -bundle-non-qt-libs -unsupported-allow-new-glibc -verbose=3
           tar -C dist -czf dist/ugar-io-qt-linux.tar.gz AppDir
 
       - name: Upload Linux package
@@ -122,14 +116,12 @@ jobs:
       - name: Deploy macOS bundle
         run: |
           mkdir -p dist
-          APP_BUNDLE="$(find build -maxdepth 4 -type d -name 'ugar-io-qt.app' -print -quit)"
+          cmake --install build --prefix "$PWD/dist" --config Release
+          APP_BUNDLE="$(find dist -maxdepth 2 -type d -name 'ugar-io-qt.app' -print -quit)"
           if [ -z "$APP_BUNDLE" ]; then
             echo "Failed to locate ugar-io-qt.app after the macOS build"
             exit 1
           fi
-          mkdir -p "$APP_BUNDLE/Contents/Resources"
-          cp resources/qt.conf "$APP_BUNDLE/Contents/Resources/qt.conf"
-          macdeployqt "$APP_BUNDLE"
           codesign --force --deep --sign - "$APP_BUNDLE"
           codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
           ditto -c -k --sequesterRsrc --keepParent "$APP_BUNDLE" dist/ugar-io-qt-macos.zip
