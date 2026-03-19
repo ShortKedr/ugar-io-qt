@@ -27,7 +27,7 @@ Add `docs/ugario_gameplay.gif` and `docs/ugario_gameplay.mov` to publish the pre
 1. CMake 3.21 or newer
 2. A C++20-capable compiler toolchain
 3. Qt 6 with `Core`, `Gui`, and `OpenGL`
-4. `windeployqt` on Windows, `macdeployqt` on macOS, or the AppImage packaging prerequisites from `scripts/package-appimage.sh` on Linux
+4. `windeployqt` on Windows, `macdeployqt` on macOS, or the AppImage prerequisites used by `scripts/package-appimage.sh` on Linux
 5. On Windows: start from a shell where your compiler and Qt are already available in `PATH`, or pass `CMAKE_PREFIX_PATH` explicitly
 
 ## Build
@@ -38,7 +38,7 @@ cmake -S . -B build/<platform>-release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/<platform>-release
 ```
 
-Package/deploy is an explicit third step per platform.
+Deploy or packaging is an explicit third step per platform.
 
 ### Windows
 Start from a shell where Qt and your compiler toolchain are already configured. One simple option is to expose your Qt and MinGW installations through environment variables:
@@ -80,7 +80,7 @@ cmake --build build/linux-release
 ./scripts/package-appimage.sh build/linux-release
 ```
 
-The AppImage script expects a finished `ugar-io-qt` binary in the build directory, uses `resources/icon.png`, runs `cmake --install` so Qt's Linux deployment script copies the required Qt runtime into `AppDir/usr`, and then emits `build/linux-release/ugar-io-qt-linux-x86_64.AppImage`.
+The AppImage script runs `cmake --install` into `AppDir/usr`, adds `resources/icon.png`, writes an `AppRun` launcher for the deployed Qt layout, and emits `build/linux-release/ugar-io-qt-linux-x86_64.AppImage`.
 
 ## CI and Releases
 GitHub Actions builds desktop artifacts for Windows, Linux, and macOS using the same `configure -> build -> deploy/package` flow as local development. Tagged releases upload a Windows ZIP, a Linux `AppImage`, and a macOS ZIP.
