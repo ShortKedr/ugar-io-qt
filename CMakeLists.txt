@@ -8,7 +8,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
 
-include(GNUInstallDirs)
+if(UNIX AND NOT APPLE)
+    include(GNUInstallDirs)
+endif()
 
 if(DEFINED ENV{QT_ROOT} AND NOT "$ENV{QT_ROOT}" STREQUAL "")
     file(TO_CMAKE_PATH "$ENV{QT_ROOT}" QT_ROOT_PATH)
@@ -55,36 +57,20 @@ if(APPLE)
     target_compile_definitions(ugar-io-qt PRIVATE GL_SILENCE_DEPRECATION)
 endif()
 
-install(TARGETS ugar-io-qt
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-)
-
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ugar-io-qt)
 endif()
 
 if(UNIX AND NOT APPLE)
-    set(UGAR_IO_QT_APP_ID "ugar-io-qt")
-    set(UGAR_IO_QT_DESKTOP_FILE
-        "${CMAKE_CURRENT_BINARY_DIR}/${UGAR_IO_QT_APP_ID}.desktop"
+    install(TARGETS ugar-io-qt
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     )
 
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/resources/ugar-io-qt.desktop.in"
-        "${UGAR_IO_QT_DESKTOP_FILE}"
-        @ONLY
-    )
-
-    install(FILES "${UGAR_IO_QT_DESKTOP_FILE}"
-            DESTINATION "${CMAKE_INSTALL_DATADIR}/applications")
-endif()
-
-if(QT_VERSION_MAJOR EQUAL 6 AND (APPLE OR UNIX))
     qt_generate_deploy_app_script(
         TARGET ugar-io-qt
-        OUTPUT_SCRIPT ugar_io_qt_deploy_script
+        FILENAME_VARIABLE ugar_io_qt_linux_deploy_script
         NO_UNSUPPORTED_PLATFORM_ERROR
     )
-    install(SCRIPT "${ugar_io_qt_deploy_script}")
+
+    install(SCRIPT "${ugar_io_qt_linux_deploy_script}")
 endif()
