@@ -48,6 +48,19 @@ jobs:
           windeployqt --release --dir dist\ugar-io-qt dist\ugar-io-qt\ugar-io-qt.exe
           Compress-Archive -Path dist\ugar-io-qt\* -DestinationPath dist\ugar-io-qt-windows.zip
 
+      - name: Smoke test Windows package
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath "dist\ugar-io-qt\ugar-io-qt.exe" -ArgumentList "--smoke-test" -PassThru -NoNewWindow
+          if (-not (Wait-Process -Id $process.Id -Timeout 15 -ErrorAction SilentlyContinue)) {
+            Stop-Process -Id $process.Id -Force
+            throw "Windows smoke test timed out"
+          }
+          $process.Refresh()
+          if ($process.ExitCode -ne 0) {
+            throw "Windows smoke test failed with exit code $($process.ExitCode)"
+          }
+
       - name: Upload Windows package
         uses: actions/upload-artifact@v4
         with:
@@ -63,7 +76,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Linux build dependencies
-        run: sudo apt-get update && sudo apt-get install -y ninja-build imagemagick patchelf desktop-file-utils appstream libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libx11-xcb1 libfontconfig1
+        run: sudo apt-get update && sudo apt-get install -y ninja-build imagemagick patchelf desktop-file-utils appstream xvfb libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libx11-xcb1 libfontconfig1
 
       - name: Install Qt 6
         uses: jurplel/install-qt-action@v4
@@ -86,6 +99,9 @@ jobs:
           cp dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png dist/AppDir/ugar-io-qt.png
           find dist/AppDir -maxdepth 4 -type f | sort
           tar -C dist -czf dist/ugar-io-qt-linux.tar.gz AppDir
+
+      - name: Smoke test Linux package
+        run: xvfb-run -a python3 -c "import subprocess; subprocess.run(['dist/AppDir/usr/bin/ugar-io-qt', '--smoke-test'], check=True, timeout=15)"
 
       - name: Upload Linux package
         uses: actions/upload-artifact@v4
@@ -125,6 +141,9 @@ jobs:
           codesign --force --deep --sign - "$APP_BUNDLE"
           codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
           ditto -c -k --sequesterRsrc --keepParent "$APP_BUNDLE" dist/ugar-io-qt-macos.zip
+
+      - name: Smoke test macOS package
+        run: python3 -c "import subprocess; subprocess.run(['dist/ugar-io-qt.app/Contents/MacOS/ugar-io-qt', '--smoke-test'], check=True, timeout=15)"
 
       - name: Upload macOS package
         uses: actions/upload-artifact@v4

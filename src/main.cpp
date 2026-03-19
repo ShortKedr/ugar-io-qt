@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QSurfaceFormat>
+#include <QTimer>
 
 #include "ugar_io_qt/gamewindow.h"
 
@@ -18,5 +19,10 @@ int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
     GameWindow window;
     window.show();
+
+    if (app.arguments().contains(QStringLiteral("--smoke-test"))) {
+        QTimer::singleShot(250, &app, &QCoreApplication::quit);
+    }
+
     return app.exec();
 }
