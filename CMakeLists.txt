@@ -43,6 +43,15 @@ target_include_directories(ugar-io-qt PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inclu
 target_link_libraries(ugar-io-qt PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::OpenGL)
 
 if(APPLE)
+    set_target_properties(ugar-io-qt PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "Ugar.io Qt"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "io.shortkedr.ugarioqt"
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
+    )
+endif()
+
+if(APPLE)
     target_compile_definitions(ugar-io-qt PRIVATE GL_SILENCE_DEPRECATION)
 endif()
 
