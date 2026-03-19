@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Linux build dependencies
-        run: sudo apt-get update && sudo apt-get install -y ninja-build libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libx11-xcb1 libfontconfig1
+        run: sudo apt-get update && sudo apt-get install -y ninja-build imagemagick patchelf desktop-file-utils appstream libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libx11-xcb1 libfontconfig1
 
       - name: Install Qt 6
         uses: jurplel/install-qt-action@v4
@@ -79,19 +79,15 @@ jobs:
 
       - name: Bundle Linux app
         run: |
-          mkdir -p dist/AppDir/usr/bin dist/AppDir/usr/share/applications
-          cp build/ugar-io-qt dist/AppDir/usr/bin/
-          cp resources/qt.conf dist/AppDir/usr/bin/
-          cat > dist/AppDir/usr/share/applications/ugar-io-qt.desktop <<'EOF'
-          [Desktop Entry]
-          Type=Application
-          Name=Ugar.io Qt
-          Exec=ugar-io-qt
-          Categories=Game;
-          EOF
+          mkdir -p dist/AppDir/usr/share/icons/hicolor/256x256/apps
+          DESTDIR="$PWD/dist/AppDir" cmake --install build --prefix /usr --config Release
+          convert "resources/icon.ico[0]" -resize 256x256 dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png
+          cp dist/AppDir/usr/share/applications/ugar-io-qt.desktop dist/AppDir/ugar-io-qt.desktop
+          cp dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png dist/AppDir/ugar-io-qt.png
           wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt.AppImage
           chmod +x linuxdeployqt.AppImage
-          ./linuxdeployqt.AppImage dist/AppDir/usr/share/applications/ugar-io-qt.desktop -bundle-non-qt-libs -unsupported-allow-new-glibc
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          ./linuxdeployqt.AppImage dist/AppDir/usr/share/applications/ugar-io-qt.desktop -qmake="$(command -v qmake)" -bundle-non-qt-libs -unsupported-allow-new-glibc -verbose=2
           tar -C dist -czf dist/ugar-io-qt-linux.tar.gz AppDir
 
       - name: Upload Linux package
@@ -123,9 +119,15 @@ jobs:
       - name: Deploy macOS bundle
         run: |
           mkdir -p dist
-          cp resources/qt.conf build/ugar-io-qt.app/Contents/Resources/qt.conf
-          macdeployqt build/ugar-io-qt.app
-          tar -C build -czf dist/ugar-io-qt-macos.tar.gz ugar-io-qt.app
+          APP_BUNDLE="$(find build -maxdepth 4 -type d -name 'ugar-io-qt.app' -print -quit)"
+          if [ -z "$APP_BUNDLE" ]; then
+            echo "Failed to locate ugar-io-qt.app after the macOS build"
+            exit 1
+          fi
+          mkdir -p "$APP_BUNDLE/Contents/Resources"
+          cp resources/qt.conf "$APP_BUNDLE/Contents/Resources/qt.conf"
+          macdeployqt "$APP_BUNDLE"
+          tar -C "$(dirname "$APP_BUNDLE")" -czf dist/ugar-io-qt-macos.tar.gz "$(basename "$APP_BUNDLE")"
 
       - name: Upload macOS package
         uses: actions/upload-artifact@v4

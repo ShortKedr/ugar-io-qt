@@ -8,6 +8,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_AUTOMOC ON)
 
+include(GNUInstallDirs)
+
 if(DEFINED ENV{QT_ROOT} AND NOT "$ENV{QT_ROOT}" STREQUAL "")
     file(TO_CMAKE_PATH "$ENV{QT_ROOT}" QT_ROOT_PATH)
     list(PREPEND CMAKE_PREFIX_PATH "${QT_ROOT_PATH}")
@@ -46,4 +48,23 @@ endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ugar-io-qt)
+endif()
+
+if(UNIX AND NOT APPLE)
+    set(UGAR_IO_QT_APP_ID "ugar-io-qt")
+    set(UGAR_IO_QT_DESKTOP_FILE
+        "${CMAKE_CURRENT_BINARY_DIR}/${UGAR_IO_QT_APP_ID}.desktop"
+    )
+
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/ugar-io-qt.desktop.in"
+        "${UGAR_IO_QT_DESKTOP_FILE}"
+        @ONLY
+    )
+
+    install(TARGETS ugar-io-qt RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/qt.conf"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    install(FILES "${UGAR_IO_QT_DESKTOP_FILE}"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/applications")
 endif()

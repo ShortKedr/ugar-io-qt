@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Ugar.io Qt
+Exec=@UGAR_IO_QT_APP_ID@
+Icon=@UGAR_IO_QT_APP_ID@
+Terminal=false
+Categories=Game;
