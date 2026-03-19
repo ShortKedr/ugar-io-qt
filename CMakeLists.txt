@@ -65,6 +65,9 @@ if(UNIX AND NOT APPLE)
     install(TARGETS ugar-io-qt
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     )
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/qt.conf"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
 
     qt_generate_deploy_app_script(
         TARGET ugar-io-qt

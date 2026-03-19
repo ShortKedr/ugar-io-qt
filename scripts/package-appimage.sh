@@ -57,7 +57,17 @@ sed "s|@UGAR_IO_QT_APP_ID@|${APP_NAME}|g" "${DESKTOP_TEMPLATE}" > "${APPDIR}/usr
 cp "${APPDIR}/usr/share/applications/${APP_NAME}.desktop" "${DESKTOP_FILE}"
 cp "${ICON_SOURCE}" "${ICON_FILE}"
 cp "${ICON_FILE}" "${APPDIR}/usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png"
-ln -s usr/bin/${APP_NAME} "${APPDIR}/AppRun"
+cat > "${APPDIR}/AppRun" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+export QT_PLUGIN_PATH="${HERE}/usr/plugins"
+export QML2_IMPORT_PATH="${HERE}/usr/qml"
+exec "${HERE}/usr/bin/ugar-io-qt" "$@"
+EOF
+chmod +x "${APPDIR}/AppRun"
 
 if [[ ! -f "${APPIMAGETOOL_APPIMAGE}" ]]; then
   wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O "${APPIMAGETOOL_APPIMAGE}"
