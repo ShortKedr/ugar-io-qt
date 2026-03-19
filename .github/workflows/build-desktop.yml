@@ -105,7 +105,7 @@ jobs:
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O dist/appimagetool.AppImage
           chmod +x dist/appimagetool.AppImage
           find dist/AppDir -maxdepth 4 -type f | sort
-          ARCH=x86_64 ./dist/appimagetool.AppImage dist/AppDir dist/ugar-io-qt-linux-x86_64.AppImage
+          APPIMAGE_EXTRACT_AND_RUN=1 ARCH=x86_64 ./dist/appimagetool.AppImage dist/AppDir dist/ugar-io-qt-linux-x86_64.AppImage
 
       - name: Smoke test Linux package
         run: APPIMAGE_EXTRACT_AND_RUN=1 xvfb-run -a python3 -c "import subprocess; subprocess.run(['dist/ugar-io-qt-linux-x86_64.AppImage', '--smoke-test'], check=True, timeout=15)"
