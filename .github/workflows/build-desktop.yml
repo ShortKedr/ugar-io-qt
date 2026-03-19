@@ -97,17 +97,20 @@ jobs:
           convert "resources/icon.ico[0]" -resize 256x256 dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png
           cp dist/AppDir/usr/share/applications/ugar-io-qt.desktop dist/AppDir/ugar-io-qt.desktop
           cp dist/AppDir/usr/share/icons/hicolor/256x256/apps/ugar-io-qt.png dist/AppDir/ugar-io-qt.png
+          ln -sf usr/bin/ugar-io-qt dist/AppDir/AppRun
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O dist/appimagetool.AppImage
+          chmod +x dist/appimagetool.AppImage
           find dist/AppDir -maxdepth 4 -type f | sort
-          tar -C dist -czf dist/ugar-io-qt-linux.tar.gz AppDir
+          ARCH=x86_64 ./dist/appimagetool.AppImage dist/AppDir dist/ugar-io-qt-linux-x86_64.AppImage
 
       - name: Smoke test Linux package
-        run: xvfb-run -a python3 -c "import subprocess; subprocess.run(['dist/AppDir/usr/bin/ugar-io-qt', '--smoke-test'], check=True, timeout=15)"
+        run: APPIMAGE_EXTRACT_AND_RUN=1 xvfb-run -a python3 -c "import subprocess; subprocess.run(['dist/ugar-io-qt-linux-x86_64.AppImage', '--smoke-test'], check=True, timeout=15)"
 
       - name: Upload Linux package
         uses: actions/upload-artifact@v4
         with:
           name: ugar-io-qt-linux
-          path: dist/ugar-io-qt-linux.tar.gz
+          path: dist/ugar-io-qt-linux-x86_64.AppImage
           if-no-files-found: error
 
   build-macos:
@@ -174,6 +177,6 @@ jobs:
         with:
           files: |
             release-assets/ugar-io-qt-windows.zip
-            release-assets/ugar-io-qt-linux.tar.gz
+            release-assets/ugar-io-qt-linux-x86_64.AppImage
             release-assets/ugar-io-qt-macos.zip
           generate_release_notes: true

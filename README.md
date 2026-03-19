@@ -85,7 +85,7 @@ cmake --build build
 If Qt is not in a default system path, pass `-DCMAKE_PREFIX_PATH=/path/to/Qt`.
 
 ## CI and Releases
-GitHub Actions builds desktop artifacts for Windows, Linux, and macOS. Tagged releases upload packaged archives for each platform.
+GitHub Actions builds desktop artifacts for Windows, Linux, and macOS. Tagged releases upload a Windows ZIP, a Linux `AppImage`, and a macOS ZIP.
 
 ## CLion
 Recommended Windows setup:
