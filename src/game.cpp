@@ -63,29 +63,22 @@ void Game::SyncAllRefs() {
     }
 }
 
+void Game::FollowCamera(const Ugar& target) {
+    cam->observedPosition.setX(cam->observedPosition.x() + (target.position.x() - cam->observedPosition.x()) * CAMERA_LERP);
+    cam->observedPosition.setY(cam->observedPosition.y() + (target.position.y() - cam->observedPosition.y()) * CAMERA_LERP);
+
+    float requiredScale = static_cast<float>(cam->viewportSize.y() / NORMAL_SCALE_RESOLUTION);
+    if (target.radius >= NORMAL_SCALE_RADIUS) {
+        requiredScale *= (NORMAL_SCALE_RADIUS / target.radius);
+    }
+    cam->scale += (requiredScale - cam->scale) * SCALE_LERP;
+}
+
 void Game::Update() {
     if (ugars[0] != nullptr && isStarted) {
-        cam->observedPosition.setX(cam->observedPosition.x() + (ugars[0]->position.x() - cam->observedPosition.x()) * CAMERA_LERP);
-        cam->observedPosition.setY(cam->observedPosition.y() + (ugars[0]->position.y() - cam->observedPosition.y()) * CAMERA_LERP);
-
-        float requiredScale = 0.0f;
-        if (ugars[0]->radius < NORMAL_SCALE_RADIUS) {
-            requiredScale = static_cast<float>(cam->viewportSize.y() / NORMAL_SCALE_RESOLUTION);
-        } else {
-            requiredScale = static_cast<float>((cam->viewportSize.y() / NORMAL_SCALE_RESOLUTION) * (NORMAL_SCALE_RADIUS / ugars[0]->radius));
-        }
-        cam->scale += (requiredScale - cam->scale) * SCALE_LERP;
+        FollowCamera(*ugars[0]);
     } else if (ugars[1] != nullptr) {
-        cam->observedPosition.setX(cam->observedPosition.x() + (ugars[1]->position.x() - cam->observedPosition.x()) * CAMERA_LERP);
-        cam->observedPosition.setY(cam->observedPosition.y() + (ugars[1]->position.y() - cam->observedPosition.y()) * CAMERA_LERP);
-
-        float requiredScale = 0.0f;
-        if (ugars[1]->radius < NORMAL_SCALE_RADIUS) {
-            requiredScale = static_cast<float>(cam->viewportSize.y() / NORMAL_SCALE_RESOLUTION);
-        } else {
-            requiredScale = static_cast<float>((cam->viewportSize.y() / NORMAL_SCALE_RESOLUTION) * (NORMAL_SCALE_RADIUS / ugars[1]->radius));
-        }
-        cam->scale += (requiredScale - cam->scale) * SCALE_LERP;
+        FollowCamera(*ugars[1]);
     }
 
     for (int i = 0; i < UGAR_AMOUNT; i++) {
@@ -119,6 +112,7 @@ void Game::Update() {
                     }
                     ugars[i].reset();
                     SyncUgarRef(i);
+                    break;
                 } else {
                     ugars[i]->SetSquare(ugars[j]->GetSquare() + ugars[i]->GetSquare());
                     if (j == 0) {
@@ -232,17 +226,14 @@ void Game::Draw(QPainter* painter) {
     if (!isStarted) {
         const QRectF mainRect(0.0, 20.0, cam->viewportSize.x(), 100.0);
         const QRectF shadowRect(3.0, 23.0, cam->viewportSize.x(), 100.0);
-        const QFont mainFont("Arial", static_cast<int>(FONT_SIZE));
-        const QFont shadowFont("Arial", static_cast<int>(FONT_SIZE));
-        const QPen mainPen(QColor(0, 0, 0, 255));
-        const QPen shadowPen(QColor(0, 0, 0, 67));
+        const QFont font("Arial", static_cast<int>(FONT_SIZE));
 
-        painter->setFont(shadowFont);
-        painter->setPen(shadowPen);
+        painter->setFont(font);
+
+        painter->setPen(QPen(QColor(0, 0, 0, 67)));
         painter->drawText(shadowRect, Qt::AlignHCenter | Qt::AlignTop, START_GAME_LABEL);
 
-        painter->setFont(mainFont);
-        painter->setPen(mainPen);
+        painter->setPen(QPen(QColor(0, 0, 0, 255)));
         painter->drawText(mainRect, Qt::AlignHCenter | Qt::AlignTop, START_GAME_LABEL);
     }
 }

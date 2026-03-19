@@ -30,9 +30,6 @@ set(UGAR_IO_QT_SOURCES
 
 if(WIN32)
     list(APPEND UGAR_IO_QT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/ugar-io-qt.rc")
-endif()
-
-if(WIN32)
     add_executable(ugar-io-qt WIN32 ${UGAR_IO_QT_SOURCES})
 elseif(APPLE)
     add_executable(ugar-io-qt MACOSX_BUNDLE ${UGAR_IO_QT_SOURCES})
@@ -43,9 +40,9 @@ endif()
 target_include_directories(ugar-io-qt PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(ugar-io-qt PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::OpenGL)
 
-set_target_properties(ugar-io-qt PROPERTIES
-    OUTPUT_NAME "ugar-io-qt"
-)
+if(APPLE)
+    target_compile_definitions(ugar-io-qt PRIVATE GL_SILENCE_DEPRECATION)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ugar-io-qt)

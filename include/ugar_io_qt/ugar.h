@@ -30,7 +30,6 @@ public:
     bool CheckCollision(Ugar* target, bool* isLesser) const;
     bool CheckFoodCollision(Food* target) const;
 
-    void SetPosition(float x, float y);
     void Move(float x, float y);
     void MoveDirection(float direction);
 
@@ -39,10 +38,9 @@ public:
     void Draw(QPainter* painter) const;
 
 private:
-    static const bool INVERT_X = false;
-    static const bool INVERT_Y = true;
+    static constexpr bool INVERT_X = false;
+    static constexpr bool INVERT_Y = true;
 
-    static constexpr float COLLISION_DISTANCE = 0.1f;
     static constexpr float U_DIFFERENCE = 0.00001f;
     static constexpr float SIZE_LERP = 0.1f;
     static constexpr float FRICTION = 0.1f;

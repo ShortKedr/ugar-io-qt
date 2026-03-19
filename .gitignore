@@ -71,7 +71,18 @@ Makefile*
 *.userosscache
 *.sln.docstates
 
+# Claude Code
+.claude/
+
+# Qt Creator
+.qtcreator/
+
+# CI/deployment output
+dist/
+
 # OS/editor noise
 *.log
 .history/
 out/
+.DS_Store
+Thumbs.db

@@ -15,7 +15,6 @@
         "PATH": "$env{MINGW_ROOT}/bin;$env{QT_ROOT}/bin;$penv{PATH}"
       },
       "cacheVariables": {
-        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/qt6-mingw.cmake"
       }
     },

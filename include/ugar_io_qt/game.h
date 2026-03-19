@@ -54,6 +54,7 @@ private:
     void SyncUgarRef(int index);
     void SyncFoodRef(int index);
     void SyncAllRefs();
+    void FollowCamera(const Ugar& target);
 };
 
 #endif // UGAR_IO_QT_GAME_H

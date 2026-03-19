@@ -14,9 +14,6 @@ public:
 
     float GetNormalXOffset() const;
     float GetNormalYOffset() const;
-
-    void SetCamera(const QPointF& vs, const QPointF& op);
-    void SetCamera(const QPointF& vs, const QPointF& op, float scale);
 };
 
 #endif // UGAR_IO_QT_CAMERA_H

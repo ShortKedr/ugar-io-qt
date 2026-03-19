@@ -1,8 +1,9 @@
 #include "ugar_io_qt/food.h"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
+#include <numbers>
+
 Food::Food(float radius, const QPointF& position)
     : radius(radius), position(position), color(std::rand() % 50, std::rand() % 50, std::rand() % 50) {
 }
@@ -15,11 +16,7 @@ void Food::UpdateDrawingRect(float xoffset, float yoffset, float scale) {
 }
 
 float Food::GetSquare() const {
-    return static_cast<float>(M_PI) * radius * radius;
-}
-
-void Food::SetSquare(float square) {
-    radius = std::sqrt(square / static_cast<float>(M_PI));
+    return std::numbers::pi_v<float> * radius * radius;
 }
 
 void Food::Draw(QPainter* painter) const {

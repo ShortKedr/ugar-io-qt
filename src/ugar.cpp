@@ -1,8 +1,8 @@
 #include "ugar_io_qt/ugar.h"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
+#include <numbers>
 
 Ugar::Ugar(const QPointF& position, float radius)
     : position(position), radius(radius), showedRadius(radius), color(std::rand() % 256, std::rand() % 256, std::rand() % 256) {
@@ -44,11 +44,6 @@ bool Ugar::CheckFoodCollision(Food* target) const {
     return dist <= collisionDist;
 }
 
-void Ugar::SetPosition(float x, float y) {
-    position.setX(x);
-    position.setY(y);
-}
-
 void Ugar::Move(float x, float y) {
     UpdateSpeedInc();
     const float sum = std::fabs(x) + std::fabs(y);
@@ -57,7 +52,7 @@ void Ugar::Move(float x, float y) {
 }
 
 void Ugar::MoveDirection(float direction) {
-    const float radians = direction * static_cast<float>(M_PI) / 180.0f;
+    const float radians = direction * std::numbers::pi_v<float> / 180.0f;
     const float xmul = INVERT_X ? -std::cos(radians) : std::cos(radians);
     const float ymul = INVERT_Y ? -std::sin(radians) : std::sin(radians);
 
@@ -67,11 +62,11 @@ void Ugar::MoveDirection(float direction) {
 }
 
 float Ugar::GetSquare() const {
-    return static_cast<float>(M_PI) * radius * radius;
+    return std::numbers::pi_v<float> * radius * radius;
 }
 
 void Ugar::SetSquare(float square) {
-    radius = std::sqrt(square / static_cast<float>(M_PI));
+    radius = std::sqrt(square / std::numbers::pi_v<float>);
 }
 
 void Ugar::Draw(QPainter* painter) const {

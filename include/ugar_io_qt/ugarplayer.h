@@ -9,10 +9,10 @@
 
 class UgarPlayer : public Ugar {
 public:
-    static const int UP_KEY = Qt::Key_W;
-    static const int DOWN_KEY = Qt::Key_S;
-    static const int LEFT_KEY = Qt::Key_A;
-    static const int RIGHT_KEY = Qt::Key_D;
+    static constexpr int UP_KEY = Qt::Key_W;
+    static constexpr int DOWN_KEY = Qt::Key_S;
+    static constexpr int LEFT_KEY = Qt::Key_A;
+    static constexpr int RIGHT_KEY = Qt::Key_D;
     static constexpr quint32 UP_SCANCODE = 0x11;
     static constexpr quint32 LEFT_SCANCODE = 0x1E;
     static constexpr quint32 DOWN_SCANCODE = 0x1F;

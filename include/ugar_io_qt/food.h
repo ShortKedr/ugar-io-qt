@@ -20,7 +20,6 @@ public:
     void UpdateDrawingRect(float xoffset, float yoffset, float scale);
 
     float GetSquare() const;
-    void SetSquare(float square);
 
     void Draw(QPainter* painter) const;
 };

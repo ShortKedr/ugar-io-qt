@@ -1,6 +1,5 @@
 #include "ugar_io_qt/gamewindow.h"
 
-#include <QBrush>
 #include <QColor>
 #include <QOpenGLFunctions>
 #include <QScreen>
