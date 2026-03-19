@@ -52,8 +52,12 @@ jobs:
         shell: pwsh
         run: |
           $process = Start-Process -FilePath "dist\ugar-io-qt\ugar-io-qt.exe" -ArgumentList "--smoke-test" -PassThru -NoNewWindow
-          if (-not (Wait-Process -Id $process.Id -Timeout 15 -ErrorAction SilentlyContinue)) {
-            Stop-Process -Id $process.Id -Force
+          try {
+            Wait-Process -Id $process.Id -Timeout 15 -ErrorAction Stop
+          } catch {
+            if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+              Stop-Process -Id $process.Id -Force
+            }
             throw "Windows smoke test timed out"
           }
           $process.Refresh()
